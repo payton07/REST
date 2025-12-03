@@ -37,7 +37,8 @@
 <div class="container">
     <div class="error-container">
         <h1>Oops!</h1>
-        <p>Quelque chose s'est mal passé ou l'élément que vous recherchez n'existe pas.</p>
+        <p th:if="${errorMessage}" th:text="${errorMessage}"></p>
+        <p th:unless="${errorMessage}">Quelque chose s'est mal passé ou l'élément que vous recherchez n'existe pas.</p>
         <p>Veuillez vérifier votre demande et réessayer.</p>
         <a href="/" class="btn">Retour à l'accueil</a>
     </div>
