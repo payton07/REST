@@ -108,16 +108,13 @@ public class RestAgenceClient implements IAgenceClient {
         
         // Extraire  l'Offre
         Map<String, Object> offMap = (Map<String, Object>) res.get("offre");
-        Number prix = (Number) offMap.get("prixTotal");
-        System.out.println("le prix avant le .doubleValue()"+prix);
-        double prixTotal = prix.doubleValue();
         OffreComp offre = new OffreComp(
             (String) offMap.get("offreId"),
             (String) offMap.get("hotelNom"),
             (String) offMap.get("chambreId"),
             (String) offMap.get("dateDebut"),
             (String) offMap.get("dateFin"),
-            prixTotal,
+            ((Number) offMap.get("prixTotal")).doubleValue(),
             (Integer) offMap.get("nbLits"),
             (String) offMap.get("imageBase64"),
             (String) offMap.get("imageType")

@@ -84,14 +84,14 @@ public class AgenceComparator {
         
         ReservationComp reservation = agence.reserverChambre(response, client, arrivalDate, departureDate);
 
-//        if (reservation != null) {
-//             try {
-//                offreRepository.deleteById(reservation.getOffre().getOffreId());
-//                responseCompRepository.deleteById(reservation.getOffre().getOffreId());
-//             } catch (Exception e) {
-//                 System.err.println("Could not delete temp offer/response: " + e.getMessage());
-//             }
-//        }
+        if (reservation != null) {
+             try {
+                offreRepository.deleteById(reservation.getOffre().getOffreId());
+                responseCompRepository.deleteById(reservation.getOffre().getOffreId());
+             } catch (Exception e) {
+                 System.err.println("Could not delete temp offer/response: " + e.getMessage());
+             }
+        }
         return reservation;
     }
 
