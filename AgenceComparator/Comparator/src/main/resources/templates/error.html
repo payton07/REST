@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .error-container h1 {
+            font-size: 4rem;
+            color: #dc3545; /* Red color for error */
+            margin-bottom: 20px;
+        }
+        .error-container p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        .error-container .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .error-container .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="error-container">
+        <h1>Oops!</h1>
+        <p>Quelque chose s'est mal passé ou l'élément que vous recherchez n'existe pas.</p>
+        <p>Veuillez vérifier votre demande et réessayer.</p>
+        <a href="/" class="btn">Retour à l'accueil</a>
+    </div>
+</div>
+
+</body>
+</html>

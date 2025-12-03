@@ -1,0 +1,108 @@
+@startuml
+class Agence {
+       - name: String
+       - description: String
+       - hotels_pourcentage: Map<String,Integer>
+       - hotels: ArrayList<Hotel>
+       + reserveHotel(...)
+       + chooseHotelBedroom(...)
+   }
+
+    class Hotel {
+      - name: String
+      - address: Address
+      - nbStar: int
+      - bedRooms: ArrayList<BedRoom>
+      - partners: Map<String,Integer>
+      + addBedRoom(BedRoom)
+      + reserveBedRoom(int, Client, String, String)
+    }
+
+    class BedRoom {
+      - number: int
+      - price: int
+      - nbBed: int
+      - reservist: Client
+      - arrivalDate: LocalDate
+      - departureDate: LocalDate
+      + isReserved(): boolean
+      + setReservist(Client, String, String)
+      + freeBedRoom()
+    }
+
+    class Client {
+      - firstName: String
+      - lastName: String
+      - email: String
+      - phone: String
+      - CreditCardNumber: double
+      - number3: int
+    }
+
+    class Address {
+      - country: String
+      - city: String
+      - street: String
+      - number: String
+      - postalCode: String
+      - locality: String
+      - gpsPosition: String
+    }
+
+    class Partner {
+        - hotel: Hotel
+        - Agence: String
+        - percentage: int
+    }
+
+    class Response {
+        - name: String
+        - address: Address
+        - nbStar: int
+        - price: int
+        - numberOfBeds: int
+        - numBedroom: int
+    }
+
+    Agence "1" o-- "*" Hotel : gère
+    Client "1" -- "1" Agence : reserve une chambre
+    Hotel "1" *-- "*" BedRoom : contient
+    Hotel "1" -- "1" Address : est situé à
+    BedRoom "1" -- "0..1" Client : est réservée par
+    Partner "1" -- "1" Hotel : est partenaire de
+    Response ..> Address
+    Response ..> Hotel
+@enduml
+
+
+ @startuml
+     title Diagramme de Séquence : Réservation d'une chambre
+
+     actor Client
+     participant Appli
+     participant Hotel
+     participant BedRoom
+
+     Client -> Appli : chooseHotelBedroom(response, client, dates)
+    activate Appli
+
+    Appli -> Hotel : reserveBedRoom(numChambre, client, dates)
+    activate Hotel
+
+    Hotel -> BedRoom : isReserved()
+    activate BedRoom
+    BedRoom --> Hotel : false
+    deactivate BedRoom
+
+    Hotel -> BedRoom : setReservist(client, dates)
+    activate BedRoom
+    BedRoom --> Hotel : void
+    deactivate BedRoom
+
+    Hotel --> Appli : "La chambre a bien été reservé par : [nom du client]"
+    deactivate Hotel
+
+    Appli --> Client : "La chambre a bien été reservé par : [nom du client]"
+    deactivate Appli
+
+    @enduml

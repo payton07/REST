@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recherche d'Hôtels - Trouvez Votre Séjour Idéal</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global & Reset (overriding some defaults from style.css for this specific page) */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px; /* Wider container */
+            margin: 0 auto; /* Center the container */
+            padding: 0 20px;
+            background: none; /* No white background for container itself */
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            color: #2c3e50; /* Darker blue-gray for headings */
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* --- Header (Copied from index.html) --- */
+        .site-header {
+            background-color: #2c3e50; /* Dark blue-gray */
+            padding: 15px 0;
+            position: sticky; /* Sticky header */
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .site-header .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f39c12; /* Vibrant orange accent */
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+        .site-header .nav-link {
+            color: #ecf0f1; /* Light gray for nav links */
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .site-header .nav-link:hover {
+            background-color: #f39c12; /* Orange on hover */
+            color: #2c3e50; /* Dark text on orange */
+        }
+
+        /* --- Search Form Styling --- */
+        .search-section {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin: 50px auto; /* Center the form block */
+            max-width: 900px; /* Slightly wider form */
+        }
+        .search-section h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 40px;
+            color: #34495e; /* Darker shade of blue-gray */
+        }
+
+        .search-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; /* Spacing between form groups */
+        }
+
+        .form-group {
+            margin-bottom: 0; /* Override default margin */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .search-section input[type="text"],
+        .search-section input[type="date"],
+        .search-section input[type="number"],
+        .search-section select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fdfdfd;
+        }
+
+        .search-section input:focus,
+        .search-section select:focus {
+            border-color: #3498db; /* Blue accent on focus */
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); /* Soft blue glow */
+            outline: none;
+        }
+
+        .search-section select {
+            appearance: none; /* Remove default select arrow */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-6.5%200-12.3%203.2-16.1%208.1-3.9%204.9-3.9%2011.6%200%2016.5l123%20123.5c4.7%204.7%2011.7%207.2%2018.8%207.2s14.1-2.5%2018.8-7.2l123-123.5c4.8-4.8%204.8-12.1-.1-17z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 30px; /* Make space for the custom arrow */
+        }
+
+        .form-submit-group {
+            grid-column: 1 / -1; /* Make button span all columns */
+            text-align: center;
+            margin-top: 30px;
+        }
+        .search-section .btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-image: linear-gradient(to right, #f39c12, #e67e22); /* Gradient button */
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .search-section .btn:hover {
+            background-image: linear-gradient(to right, #e67e22, #f39c12); /* Reverse gradient on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* --- Footer (Copied from index.html) --- */
+        .footer-section {
+            background-color: #2c3e50; /* Dark blue-gray, matching header */
+            color: #bdc3c7; /* Lighter gray for footer text */
+            padding: 30px 20px;
+            margin-top: 60px;
+            border-radius: 0; /* Full width footer */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        .footer-section .container {
+            padding: 0 20px;
+        }
+        .footer-section p {
+            margin: 0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .search-section h1 {
+                font-size: 2.2rem;
+            }
+            .search-form-grid {
+                grid-template-columns: 1fr; /* Single column on small screens */
+            }
+            .site-header .logo {
+                font-size: 1.5rem;
+            }
+            .site-header nav {
+                display: none; /* Hide nav on small screens for simplicity */
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">TrouveTonHotel</a>
+            <nav>
+                <a href="/search" class="nav-link">Rechercher un hôtel</a>
+                <!-- Optional: add more nav links here -->
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="search-section">
+            <h1>Trouvez l'Hôtel Parfait Pour Votre Voyage</h1>
+            <form action="/hotels" method="get" class="search-form-grid">
+                <div class="form-group">
+                    <label for="ville">Ville de séjour</label>
+                    <input type="text" id="ville" name="ville" required>
+                </div>
+                <div class="form-group">
+                    <label for="dateDebut">Date d’arrivée</label>
+                    <input type="date" id="dateDebut" name="dateDebut" required>
+                </div>
+                <div class="form-group">
+                    <label for="dateFin">Date de départ</label>
+                    <input type="date" id="dateFin" name="dateFin" required>
+                </div>
+                <div class="form-group">
+                    <label for="prixMin">Prix minimum</label>
+                    <input type="number" id="prixMin" name="prixMin" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="prixMax">Prix maximum</label>
+                    <input type="number" id="prixMax" name="prixMax" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="etoiles">Nombre d'étoiles</label>
+                    <select id="etoiles" name="etoiles">
+                        <option value="">Toutes</option>
+                        <option value="1">1 étoile</option>
+                        <option value="2">2 étoiles</option>
+                        <option value="3">3 étoiles</option>
+                        <option value="4">4 étoiles</option>
+                        <option value="5">5 étoiles</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nombrePersonnes">Nombre de personnes</label>
+                    <input type="number" id="nombrePersonnes" name="nombrePersonnes" min="1" required>
+                </div>
+                <div class="form-submit-group">
+                    <button type="submit" class="btn">Rechercher des Hôtels</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="footer-section">
+        <div class="container">
+            <p>&copy; 2025 FindMyHotel. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

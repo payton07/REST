@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparateur d'Hôtels - Votre Voyage Idéal</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global & Reset (overriding some defaults from style.css for this specific page) */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px; /* Wider container */
+            margin: 0 auto; /* Center the container */
+            padding: 0 20px;
+            background: none; /* No white background for container itself */
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            color: #2c3e50; /* Darker blue-gray for headings */
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* --- Header --- */
+        .site-header {
+            background-color: #2c3e50; /* Dark blue-gray */
+            padding: 15px 0;
+            position: sticky; /* Sticky header */
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .site-header .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f39c12; /* Vibrant orange accent */
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+        .site-header .nav-link {
+            color: #ecf0f1; /* Light gray for nav links */
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .site-header .nav-link:hover {
+            background-color: #f39c12; /* Orange on hover */
+            color: #2c3e50; /* Dark text on orange */
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            position: relative;
+            background: url('https://placehold.co/1200x600/1a2b3c/white?text=Votre+Prochaine+Aventure+Commence+Ici') no-repeat center center;
+            background-size: cover;
+            min-height: 500px; /* Taller hero section */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-bottom: 50px;
+            border-radius: 0; /* Full width hero */
+            overflow: hidden;
+        }
+        .hero-section::before {
+            background-color: rgba(44, 62, 80, 0.6); /* Darker, more thematic overlay */
+            background-image: linear-gradient(to top, rgba(44, 62, 80, 0.8) 0%, rgba(44, 62, 80, 0.4) 100%); /* Subtle gradient */
+            border-radius: 0;
+        }
+        .hero-section .hero-content { /* New wrapper for content */
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 10px;
+            transform: translateY(20px); /* Shift content down by 20 pixels */
+        }
+        .hero-section h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+            line-height: 1.1;
+        }
+        .hero-section p {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+        }
+        .hero-section .btn {
+            padding: 20px 45px;
+            font-size: 1.4rem;
+            background-color: #f39c12; /* Vibrant orange accent */
+            color: #2c3e50; /* Dark text on orange */
+            border-radius: 50px; /* Fully rounded, pill-shaped */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .hero-section .btn:hover {
+            background-color: #e67e22; /* Slightly darker orange on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        /* --- Features Section --- */
+        .features-section {
+            display: grid; /* Use grid for more control */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px; /* More space between cards */
+            margin-bottom: 50px;
+            padding: 20px 0;
+        }
+        .feature-item {
+            background-color: #ffffff; /* White background for cards */
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+        .feature-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .feature-item i {
+            font-size: 3.5rem; /* Larger icons */
+            color: #3498db; /* A blue accent for icons */
+            margin-bottom: 25px;
+            background-color: #ecf0f1; /* Light background for icons */
+            border-radius: 50%;
+            padding: 20px;
+            display: inline-block; /* To apply padding */
+        }
+        .feature-item h3 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .feature-item p {
+            color: #7f8c8d; /* Muted gray for description */
+            line-height: 1.6;
+        }
+
+        /* --- Footer --- */
+        .footer-section {
+            background-color: #2c3e50; /* Dark blue-gray, matching header */
+            color: #bdc3c7; /* Lighter gray for footer text */
+            padding: 30px 20px;
+            margin-top: 60px;
+            border-radius: 0; /* Full width footer */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        .footer-section p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">TrouveTonHotel</a>
+            <nav>
+                <a href="/search" class="nav-link">Rechercher un hôtel</a>
+                <!-- Optional: add more nav links here -->
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Découvrez Votre Séjour Idéal</h1>
+                </br>
+                <p>Comparez, explorez et réservez parmi des milliers d'offres d'hôtels uniques, au meilleur prix garanti.</p>
+                <a href="/search" class="btn">Commencer l'Aventure</a>
+            </div>
+        </section>
+
+        <section class="features-section container">
+            <div class="feature-item">
+                <i class="fas fa-money-bill-wave"></i>
+                <h3>Prix Imbattables</h3>
+                <p>Nous scrutons le web pour vous offrir les tarifs les plus compétitifs.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-globe-americas"></i>
+                <h3>Destinations Mondiales</h3>
+                <p>Un choix inégalé d'hébergements, de la charmante auberge au complexe de luxe.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Réservation Sécurisée</h3>
+                <p>Processus de réservation simple, rapide et entièrement sécurisé pour votre tranquillité.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer-section">
+        <div class="container">
+            <p>&copy; 2025 FindMyHotel. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

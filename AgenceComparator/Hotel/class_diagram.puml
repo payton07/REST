@@ -1,0 +1,131 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Service" {
+    interface IHotel {
+        + rechercherOffres(...) : ArrayList<Offre>
+        + reserver(...) : Reservation
+        + getHotelInfo(...) : HotelInfo
+        + devenirPartenaire(...) : Partenariat
+    }
+
+    class Hotel implements IHotel {
+        - id: String
+        - nom: String
+        - nbEtoiles: int
+        - imageBase64: String
+        ---
+        + rechercherOffres(...)
+        + reserver(...)
+        + getHotelInfo(...)
+        + devenirPartenaire(...)
+    }
+}
+
+package "Model (Entities)" {
+    class Offre <<Entity>> {
+        @Id - offreId: String
+        - chambreId: String
+        - dateDebut: String
+        - prixTotal: double
+    }
+
+    class Chambre <<Entity>> {
+        @Id - id: String
+        - nbLits: int
+        - prixBaseParNuit: double
+    }
+
+    class Client <<Entity>> {
+        @Id - id: String
+        - nom: String
+        - prenom: String
+        - email: String
+    }
+
+    class Partenaire <<Entity>> {
+        @Id - idAgence: String
+        - pourcentage: int
+    }
+
+    class Reservation <<Entity>> {
+        @Id - reservationId: String
+        - dateReservation: String
+    }
+}
+
+package "Repository" {
+    interface OffreRepository <<Repository>> {}
+    interface ChambreRepository <<Repository>> {}
+    interface ClientRepository <<Repository>> {}
+    interface PartenaireRepository <<Repository>> {}
+    interface ReservationRepository <<Repository>> {}
+}
+
+package "Types (Value Objects / DTOs)" {
+    class Adresse <<Embeddable>> {
+        - rue: String
+        - ville: String
+        - codePostal: String
+    }
+
+    class HotelInfo <<DTO>> {
+        - nom: String
+        - nbEtoile: int
+    }
+    
+    class PaiementInfo <<Embeddable>> {
+      - numeroCarteCredit: double
+    }
+
+    class Partenariat <<DTO>> {
+        - HotelId: String
+        - pourcentage: int
+    }
+
+    class PeriodeDisponible {
+        - dateDebut: LocalDate
+        - dateFin: LocalDate
+    }
+    
+    enum Statut {
+        CONFIRMEE
+        ANNULEE
+    }
+}
+
+
+' --- Relationships ---
+
+' Service Layer Dependencies
+Hotel .> OffreRepository : "uses"
+Hotel .> ChambreRepository : "uses"
+Hotel .> ClientRepository : "uses"
+Hotel .> PartenaireRepository : "uses"
+Hotel .> ReservationRepository : "uses"
+
+' Repository to Entity Management
+OffreRepository "1" o-- "*" Offre
+ChambreRepository "1" o-- "*" Chambre
+ClientRepository "1" o-- "*" Client
+PartenaireRepository "1" o-- "*" Partenaire
+ReservationRepository "1" o-- "*" Reservation
+
+' Entity Relationships
+Reservation "1" -- "1" Offre : "@OneToOne"
+Reservation "1" -- "1" Client : "@ManyToOne"
+Chambre "1" *-- "0..*" PeriodeDisponible
+
+' Composition / Embedded Relationships
+Hotel "1" *-- "1" Adresse
+HotelInfo "1" *-- "1" Adresse
+Reservation "1" *-- "1" PaiementInfo
+Reservation "1" *-- "1" Statut
+
+' DTO Creation / Usage
+Hotel ..> HotelInfo : "<<creates>>"
+Hotel ..> Partenariat : "<<creates>>"
+
+@enduml
