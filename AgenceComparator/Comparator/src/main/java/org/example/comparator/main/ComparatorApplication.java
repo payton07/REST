@@ -16,5 +16,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class ComparatorApplication {
     public static void main(String[] args) {
         SpringApplication.run(ComparatorApplication.class, args);
+        System.out.println("Application started successfully , Consulter : http://localhost:9100");
     }
 }

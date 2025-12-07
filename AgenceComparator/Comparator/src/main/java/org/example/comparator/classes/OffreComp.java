@@ -38,7 +38,7 @@ public class OffreComp {
     }
 
     public double getPrix() {
-        return prix;
+        return prix * getNbJour();
     }
 
     public void setPrix(double prix) {

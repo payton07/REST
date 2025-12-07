@@ -60,7 +60,7 @@ public class Agence implements IAgence {
             String port = entry.getValue();
             String url = String.format("http://localhost:%s/api/hotel/search?idAgence=%s&mdpAgence=%s&debut=%s&fin=%s&nbPersonnes=%d&minPrice=%d&maxPrice=%d",
                     port, this.name, this.password, arrivalDate, departureDate, nbPeople, minPrice, maxPrice);
-            String pURL = String.format("http://localhost:%s/api/hotel/partenaire/idAgence=%s&login=%s&mdpAgence=%s",port,this.name,this.name,this.password);
+            String pURL = String.format("http://localhost:%s/api/hotel/partenaire?idAgence=%s&login=%s&mdpAgence=%s",port,this.name,this.name,this.password);
 
             try {
                 // 1. Etape de filtrage PREALABLE : On recupere les infos de l'hotel
@@ -72,7 +72,7 @@ public class Agence implements IAgence {
                     String ville = (String) adresse.get("ville");
 
                     if (ville.equalsIgnoreCase(city) && stars >= nbStars) {
-
+                        Map<String,Object> partenariat = restTemplate.getForObject(pURL,Map.class);
                         ArrayList<Map<String, Object>> hotelOffers = restTemplate.getForObject(url, ArrayList.class);
 
                         if (hotelOffers != null) {

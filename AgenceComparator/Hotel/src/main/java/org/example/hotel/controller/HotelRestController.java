@@ -159,7 +159,7 @@ public class HotelRestController {
         return hotel.getHotelInfo(idAgence, login, mdpAgence);
     }
 
-    @PostMapping("/partenaire")
+    @GetMapping("/partenaire")
     public Partenariat devenirPartenaire(@RequestParam String idAgence, @RequestParam String login, @RequestParam String mdpAgence) {
         return hotel.devenirPartenaire(idAgence, login, mdpAgence);
     }
