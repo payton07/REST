@@ -63,23 +63,20 @@ public class Agence implements IAgence {
             String pURL = String.format("http://localhost:%s/api/hotel/partenaire/idAgence=%s&login=%s&mdpAgence=%s",port,this.name,this.name,this.password);
 
             try {
+                // 1. Etape de filtrage PREALABLE : On recupere les infos de l'hotel
+                Map<String, Object> hotelInfo = getHotelInfoREST(port);
 
-                Map<String, Object> partenariat = restTemplate.getForObject(pURL, Map.class);
-                if(partenariat != null) {
-                    System.out.println("partenariat null !");
-                }
-                System.out.println("partenariat avec : "+partenariat.get("HotelId "));
-                ArrayList<Map<String, Object>> hotelOffers = restTemplate.getForObject(url, ArrayList.class);
+                if (hotelInfo != null) {
+                    Map<String, Object> adresse = (Map<String, Object>) hotelInfo.get("adresse");
+                    int stars = (Integer) hotelInfo.get("nbEtoile");
+                    String ville = (String) adresse.get("ville");
 
-                if (hotelOffers != null) {
-                    Map<String, Object> hotelInfo = getHotelInfoREST(port);
-                    for (Map<String, Object> offerData : hotelOffers) {
-                        if (hotelInfo != null) {
-                            Map<String, Object> adresse = (Map<String, Object>) hotelInfo.get("adresse");
-                            int stars = (Integer) hotelInfo.get("nbEtoile");
-                            String ville = (String) adresse.get("ville");
+                    if (ville.equalsIgnoreCase(city) && stars >= nbStars) {
 
-                            if (ville.equalsIgnoreCase(city) && stars >= nbStars) {
+                        ArrayList<Map<String, Object>> hotelOffers = restTemplate.getForObject(url, ArrayList.class);
+
+                        if (hotelOffers != null) {
+                            for (Map<String, Object> offerData : hotelOffers) {
                                 Response res = mapToResponse(offerData, hotelInfo, nbJour, hotelName);
                                 allResponses.add(res);
                             }

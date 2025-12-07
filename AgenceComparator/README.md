@@ -1,9 +1,9 @@
-## Comparateur d'Hôtels - Services Web SOAP
+## Comparateur d'Hôtels - Services Web REST
 
 Ce projet démontre une architecture orientée services (SOA) basée sur
-des services web SOAP pour construire un comparateur d'offres
+des **services web REST** pour construire un comparateur d'offres
 hôtelières. L'application est décomposée en trois modules Java
-indépendants communiquant exclusivement via SOAP.
+indépendants communiquant exclusivement via des API REST (HTTP/JSON).
 
 ### Architecture
 
@@ -11,38 +11,39 @@ Le système est une architecture distribuée à trois niveaux :
 
 1.  **Service `Hotel`** : Le niveau le plus bas. Chaque instance
     représente un hôtel unique, gérant chambres, tarifs et partenariats.
-    Il expose un service SOAP pour consulter ses offres et faire des
+    Il expose une API REST pour consulter ses offres et faire des
     réservations.
 
 2.  **Service `Agence`** : Le niveau intermédiaire. Il consomme les
-    services SOAP de plusieurs hôtels partenaires pour agréger leurs
-    offres, puis expose son propre service.
+    API REST de plusieurs hôtels partenaires pour agréger leurs
+    offres, les filtrer, puis expose sa propre API REST.
 
 3.  **Application `Comparator`** : Le niveau supérieur et point d'entrée
     utilisateur. Application web Spring Boot avec interface Thymeleaf,
-    consommant plusieurs services d'agences pour comparer et réserver.
+agissant comme un client REST pour comparer les offres de plusieurs
+agences et réserver.
 
-![Architecture globale](images/global_architecture.png)
+![Architecture globale](../images/rest_global_architecture.png)
 
 ------------------------------------------------------------------------
 
 ### Pile technologique
 
 -   **Langage** : Java 8+
--   **Framework** : Spring Boot
+-   **Framework** : Spring Boot (Web)
 -   **Gestion de projet** : Maven
--   **Services Web** : JAX-WS (WSDL, wsimport)
+-   **Services Web** : REST API (JSON, RestTemplate)
 -   **Base de données** : H2
 -   **Interface utilisateur** : Thymeleaf
 
 ### Comment lancer le projet
 
-Pour lancer l'écosystème, démarrez les services dans cet ordre :\
+Pour lancer l'écosystème, démarrez les services dans cet ordre :\ 
 **Hotel → Agence → Comparator**
 
 #### Prérequis
 
--   JDK 8\
+-   JDK 8 (ou version supérieure)\ 
 -   Apache Maven
 
 ------------------------------------------------------------------------
@@ -54,23 +55,22 @@ Chaque service `Hotel` doit être lancé dans son propre terminal.
 #### Terminal 1 : Premier hôtel
 
 -   `cd Hotel`
--   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8000"`
--   Choisissez par exemple le port `8081` et l'hôtel `Belaroia`.
--   WSDL : `http://localhost:8081/Belaroia?wsdl`
+-   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"`
+-   Choisissez par exemple l'hôtel `Belaroia`.
+-   API Base : `http://localhost:8081/api/hotel`
 
 #### Terminal 2 : Deuxième hôtel
 
 -   `cd Hotel`
--   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8001"`
--   Ex. port `8082`, hôtel `Ibis`.
--   WSDL : `http://localhost:8082/Ibis?wsdl`
+-   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8082"`
+-   Choisissez par exemple l'hôtel `Ibis`.
+-   API Base : `http://localhost:8082/api/hotel`
 
 #### Terminal 3 : Troisième hôtel (optionnel)
 
 -   `cd Hotel`
--   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8003"`
--   Port différent, ex. `8083`, hôtel `Novotel`
--   WSDL : `http://localhost:8083/Novotel?wsdl`
+-   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8083"`
+-   API Base : `http://localhost:8083/api/hotel`
 
 > **Note :** Il faut s'assurer d'utiliser un port différent pour chaque
 > instance.
@@ -80,67 +80,39 @@ Chaque service `Hotel` doit être lancé dans son propre terminal.
 ### Étape 2 : Configurer et lancer le service `Agence`
 
 #### 1. Mettre à jour la configuration
+Si vous avez ajouter un nouvel hotel : \
+Modifier le fichier `application.properties` du projet Agence
+- ajouter la nouvelle agence en ajoutant cette ligne et remplaçant par les valeurs correspondantes:
 
-Dans `Agence/src/main/java/org/example/agence/config/AgenceConfig.java`
-:
+      agences.hotels.<nom_agence>=port
 
-``` java
-public AgenceConfig() {
-    this.liens = new ArrayList<>();
-    liens.add("http://localhost:8081/Belaroia?wsdl");
-    liens.add("http://localhost:8082/Ibis?wsdl");
-    // ajouter les autres hôtels si nécessaires
-}
-```
+#### 2. Lancer le service
 
-#### 2. Générer les classes client SOAP
-
-Dans `Agence/` :
-
-``` bash
-wsimport -s src/main/java -keep -p org.example.agence.hotel http://localhost:8082/Ibis?wsdl
-```
-
-#### 3. Lancer le service
-
--   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8888"`
--   Choisissez un nom d'agence (ex : `StreetMan`) et un port (ex :
-    `8881`).
--   WSDL : `http://localhost:8881/StreetMan?wsdl`
+-   `cd Agence`
+-   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8881"`
+-   Choisissez un nom d'agence (ex : `StreetMan`).
+-   API Base : `http://localhost:8881/api/agence`
 
 Vous pouvez créer plusieurs agences : utilisez un port différent pour
-chacune.\
-Ex :\
-`mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8889"`
+chacune.
+Ex :
+`mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8882"`
 
 ------------------------------------------------------------------------
 
 ### Étape 3 : Configurer et lancer le `Comparator`
 
 #### 1. Mettre à jour la configuration
+Si vous avez ajouter une nouvelle agence : \
+Modifier le fichier `application.properties` du projet Comparator
+- ajouter la nouvelle agence en ajoutant cette ligne et remplaçant par les valeurs correspondantes:
 
-`Comparator/src/main/java/org/example/comparator/config/ComparatorConfig.java`
-:
+      comparator.agences.<nom_agence>=port
 
-``` java
-public ComparatorConfig() {
-    this.liens = new ArrayList<>();
-    liens.add("http://localhost:8881/StreetMan?wsdl");
-    liens.add("http://localhost:8882/Expedia?wsdl");
-    // ajouter les autres agences ou enlever un parmi les deux si nécessaires
-}
-```
 
-#### 2. Générer les classes client SOAP
+#### 2. Lancer l'application
 
-Dans `Comparator/` :
-
-``` bash
-wsimport -s src/main/java -keep -p org.example.comparator.agence http://localhost:8881/StreetMan?wsdl
-```
-
-#### 3. Lancer l'application
-
+-   `cd Comparator`
 -   `mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=9100"`
 
 ------------------------------------------------------------------------
@@ -153,6 +125,6 @@ Ouvrez :
 
 Vous pouvez maintenant :
 
--   rechercher des hôtels,
+-   rechercher des hôtels (les appels REST sont orchestrés en arrière-plan),
 -   consulter les offres agrégées,
 -   effectuer une réservation.
