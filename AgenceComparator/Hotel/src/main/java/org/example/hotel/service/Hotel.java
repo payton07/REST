@@ -93,11 +93,7 @@ public class Hotel implements IHotel {
 
                 Optional<Client> existingClient = clientRepository.findByEmail(client.getEmail());
                 Client clientToSave;
-                if(existingClient.isPresent()){
-                    clientToSave = existingClient.get();
-                } else {
-                    clientToSave = clientRepository.save(client);
-                }
+                clientToSave = existingClient.orElseGet(() -> clientRepository.save(client));
 
                 PaiementInfo paiementInfo = new PaiementInfo(clientToSave.getNumeroCarteCredit(), clientToSave.getCardBackNumber());
                 Reservation reservation = new Reservation(IdGenerator.generateReservationId(),offre,clientToSave,Statut.CONFIRMEE,paiementInfo);

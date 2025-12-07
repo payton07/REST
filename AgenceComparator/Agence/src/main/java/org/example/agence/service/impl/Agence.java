@@ -4,6 +4,7 @@ import org.example.agence.classes.*;
 import org.example.agence.model.Response;
 import org.example.agence.service.interfaces.IAgence;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.stereotype.Service;
 
@@ -59,8 +60,15 @@ public class Agence implements IAgence {
             String port = entry.getValue();
             String url = String.format("http://localhost:%s/api/hotel/search?idAgence=%s&mdpAgence=%s&debut=%s&fin=%s&nbPersonnes=%d&minPrice=%d&maxPrice=%d",
                     port, this.name, this.password, arrivalDate, departureDate, nbPeople, minPrice, maxPrice);
+            String pURL = String.format("http://localhost:%s/api/hotel/partenaire/idAgence=%s&login=%s&mdpAgence=%s",port,this.name,this.name,this.password);
 
             try {
+
+                Map<String, Object> partenariat = restTemplate.getForObject(pURL, Map.class);
+                if(partenariat != null) {
+                    System.out.println("partenariat null !");
+                }
+                System.out.println("partenariat avec : "+partenariat.get("HotelId "));
                 ArrayList<Map<String, Object>> hotelOffers = restTemplate.getForObject(url, ArrayList.class);
 
                 if (hotelOffers != null) {
